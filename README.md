@@ -6,86 +6,120 @@
 
 ## 📌 About
 
-This project is being developed for the **Multimodal AI Hackathon 2026 – Track A**.
+CardioRisk 3D is an AI-powered web application for **cardiovascular risk prediction and coronary artery visualization**.
 
-The current implementation focuses on building the **machine learning pipeline** for predicting:
+The system predicts:
 
-* Overall Coronary Artery Disease (CAD)
-* LAD stenosis
-* LCX stenosis
-* RCA stenosis
+* Overall **CAD (Coronary Artery Disease)** probability
+* **LAD** stenosis probability
+* **LCX** stenosis probability
+* **RCA** stenosis probability
 
----
-
-## 📊 Dataset
-
-We are using the **Extension of Z-Alizadeh Sani Dataset**.
-
-* **303 patient records**
-* **59 original columns**
-* **55 features** used as model inputs
-
-The dataset contains demographic, clinical, ECG, laboratory, and echocardiographic features.
+The predictions are generated from demographic, clinical, ECG, laboratory, and echocardiographic features.
 
 ---
 
-## 🔐 Data Preprocessing
+## 🚀 Key Features
 
-The following target-related columns were excluded from the model inputs to prevent data leakage:
+### 🧠 Machine Learning
+
+* CAD prediction using SVM
+* LAD, LCX and RCA stenosis prediction using Random Forest
+* Probability-based predictions
+* Data preprocessing and categorical feature encoding
+* Target leakage prevention by excluding `Cath`, `LAD`, `LCX`, and `RCA` from input features
+
+### 📊 Clinical Dashboard
+
+* Patient clinical data input
+* Overall CAD probability
+* Individual coronary vessel probabilities
+* Clinical and physiological measurements
+
+### 🫀 3D Cardiovascular Visualization
+
+* Interactive 3D heart/coronary anatomy
+* LAD, LCX and RCA visualization
+* Probability-based vessel visualization
+* Rotate and zoom interaction
+* Vessel selection
+
+### 🔍 Explainable AI
+
+* Feature contribution visualization
+* SHAP/LIME-based model explanations
+* Interpretable clinical prediction results
+
+### ⚕️ Safety
+
+A visible clinical disclaimer is included:
+
+> **For educational and clinical decision-support purposes only. This system is not a substitute for formal diagnostic evaluation or medical imaging.**
+
+---
+
+## 🏗️ System Architecture
 
 ```text
-Cath
-LAD
-LCX
-RCA
-```
-
-Categorical features were converted into numerical representations.
-
-Examples:
-
-```text
-Male / Fmale → 1 / 0
-Y / N → 1 / 0
-BBB → 0 / 1 / 2
-VHD → 0 / 1 / 2 / 3
+              Patient Clinical Data
+                       │
+                       ▼
+              React Frontend
+                       │
+                       ▼
+                FastAPI Backend
+                       │
+          ┌────────────┼────────────┐
+          ▼            ▼            ▼
+       CAD Model    LAD Model   LCX/RCA Models
+          │            │            │
+          └────────────┼────────────┘
+                       ▼
+              Prediction Results
+                       │
+             ┌─────────┴─────────┐
+             ▼                   ▼
+       Clinical Dashboard    3D Visualization
+             │                   │
+             └─────────┬─────────┘
+                       ▼
+                Explainable AI
 ```
 
 ---
 
-## 🤖 Model Comparison
+## 🛠️ Technology Stack
 
-Four machine learning models were evaluated:
+**Machine Learning**
 
-* Logistic Regression
+* Python
+* Pandas
+* Scikit-learn
+* SVM
 * Random Forest
-* Support Vector Machine (SVM)
-* XGBoost
+* Joblib
 
-Models were evaluated using **5-fold Stratified Cross-Validation**.
+**Backend**
 
-### Evaluation Metrics
+* FastAPI
+* Uvicorn
 
-* Accuracy
-* Precision
-* Recall
-* F1-score
-* ROC-AUC
+**Frontend**
 
----
+* React
+* Vite
+* JavaScript
+* CSS
 
-## 🏆 Selected Models
+**3D Visualization**
 
-Based on the model comparison:
+* Three.js
+* React Three Fiber
+* Drei
 
-| Target | Selected Model | Accuracy | Precision | Recall |    F1 | ROC-AUC |
-| ------ | -------------- | -------: | --------: | -----: | ----: | ------: |
-| CAD    | SVM            |    87.8% |     92.1% |  90.7% | 91.3% |   92.7% |
-| LAD    | Random Forest  |    78.6% |     80.1% |  84.8% | 82.3% |   85.7% |
-| LCX    | Random Forest  |    68.7% |     62.4% |  54.7% | 57.9% |   72.5% |
-| RCA    | Random Forest  |    68.3% |     60.0% |  53.4% | 55.8% |   72.3% |
+**Explainability**
 
-> Results shown above are mean results from 5-fold cross-validation.
+* SHAP / LIME
 
 ---
 
@@ -99,8 +133,8 @@ cardio-risk-3d/
 │
 ├── ml/
 │   ├── check_data.py
-│   ├── preprocessing.py
 │   ├── model_comparison.py
+│   ├── preprocess.py
 │   └── train_final_models.py
 │
 ├── models/
@@ -111,111 +145,125 @@ cardio-risk-3d/
 │   └── feature_columns.pkl
 │
 ├── backend/
+│   └── app.py
+│
 ├── frontend/
+│   ├── src/
+│   ├── package.json
+│   └── ...
+│
 └── README.md
 ```
 
 ---
 
-## ⚙️ Installation
+## 📌 Dataset
 
-Install the required Python libraries:
+The project uses an extension of the **Z-Alizadeh Sani Dataset** containing **303 patient records** with cardiovascular clinical information.
 
-```bash
-pip install pandas numpy scikit-learn openpyxl joblib xgboost
-```
+The model uses:
 
----
+* Demographic features
+* Risk factors
+* Clinical history
+* ECG features
+* Laboratory values
+* Echocardiographic features
 
-## ▶️ Run the ML Pipeline
-
-### 1. Check Dataset
-
-```bash
-python ml/check_data.py
-```
-
-This checks the dataset structure, columns, missing values, and target distributions.
-
-### 2. Preprocess Dataset
-
-```bash
-python ml/preprocessing.py
-```
-
-This performs the required categorical feature encoding and preprocessing.
-
-### 3. Compare Models
-
-```bash
-python ml/model_comparison.py
-```
-
-This compares Logistic Regression, Random Forest, SVM, and XGBoost using 5-fold stratified cross-validation.
-
-### 4. Train Final Models
-
-```bash
-python ml/train_final_models.py
-```
-
-The selected models are trained on the complete dataset and saved inside the `models/` directory.
-
----
-
-## 💾 Saved Models
-
-The trained models are stored as:
+To prevent target leakage, the following columns are excluded from model inputs:
 
 ```text
-models/
-├── cad_model.pkl
-├── lad_model.pkl
-├── lcx_model.pkl
-├── rca_model.pkl
-└── feature_columns.pkl
+Cath
+LAD
+LCX
+RCA
 ```
 
-### Model Selection
+---
+
+## 🤖 Machine Learning Models
+
+| Target | Model         |
+| ------ | ------------- |
+| CAD    | SVM           |
+| LAD    | Random Forest |
+| LCX    | Random Forest |
+| RCA    | Random Forest |
+
+The models return probability scores between **0 and 1**, which are displayed as percentages in the dashboard.
+
+---
+
+## 📈 Evaluation
+
+The ML pipeline supports evaluation using:
+
+* Accuracy
+* Precision
+* Recall
+* F1 Score
+* ROC-AUC
+
+These metrics are used to evaluate the predictive performance of the models.
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1. Clone Repository
+
+```bash
+git clone <repository-url>
+cd cardio-risk-3d
+```
+
+### 2. Install Python Dependencies
+
+```bash
+pip install pandas scikit-learn joblib fastapi uvicorn openpyxl
+```
+
+### 3. Start Backend
+
+From the project root:
+
+```bash
+uvicorn backend.app:app --reload
+```
+
+Backend:
 
 ```text
-CAD → SVM
-LAD → Random Forest
-LCX → Random Forest
-RCA → Random Forest
+http://127.0.0.1:8000
 ```
 
----
+API documentation:
 
-## 🩺 Current Progress
+```text
+http://127.0.0.1:8000/docs
+```
 
-* [x] Dataset loading
-* [x] Dataset inspection
-* [x] Data preprocessing
-* [x] Categorical feature encoding
-* [x] Target encoding
-* [x] Data leakage prevention
-* [x] Model comparison
-* [x] 5-fold cross-validation
-* [x] Model selection
-* [x] Final model training
-* [x] Model weights saved
+### 4. Start Frontend
 
----
+```bash
+cd frontend
+npm install
+npm install three @react-three/fiber @react-three/drei
+npm run dev
+```
 
-## 🔮 Next Steps
-
-* [ ] SHAP/LIME explainability
-* [ ] FastAPI backend
-* [ ] React frontend
-* [ ] Interactive 3D heart model
-* [ ] LAD/LCX/RCA risk visualization
-* [ ] Clinical dashboard
+Open the local URL provided by Vite.
 
 ---
 
-## ⚠️ Disclaimer
+## ⚠️ Clinical Disclaimer
 
-This project is an **educational/research prototype** developed for the Multimodal AI Hackathon 2026.
+**This application is developed for educational and clinical decision-support purposes only. It does not provide a definitive medical diagnosis and should not replace professional clinical evaluation, formal diagnostic imaging, or advice from a qualified healthcare professional.**
 
-The predictions generated by the models are **not medical diagnoses** and should not be used as a substitute for professional medical advice or formal diagnostic procedures.
+---
+
+## 👥 Project
+
+**CardioRisk 3D**
+**Track:** Cardiovascular Risk Visualization & Prediction
+**Domain:** AI / Machine Learning / Healthcare / 3D Visualization
